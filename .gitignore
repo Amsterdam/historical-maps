@@ -3,6 +3,6 @@
 node_modules
 
 # Ignore downloaded and warped maps:
-1909
-1943
-1985
+/1909
+/1943
+/1985
