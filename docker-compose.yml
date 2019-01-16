@@ -1,0 +1,27 @@
+version: '3.0'
+services:
+  mapproxy:
+    build: mapproxy
+    ports:
+      - "8000:8000"
+    environment:
+      UWSGI_HTTP: "0.0.0.0:8000"
+      UWSGI_MASTER: 1
+      UWSGI_PROCESSES: 4
+
+  mapserver:
+    build: mapserver
+    user: root
+    ports:
+      - "80:80"
+    volumes:
+#     Lufo mount is only for annual local luchtfoto tiles
+      - /tmp/srv/kaart:/mnt/kaart
+
+  topo-kaart:
+    build: mapproxy
+    user: root
+    command: >
+      mapproxy-seed -c 6 -s /app/seed.yaml -f /app/mapproxy.yaml --seed=kaart_rd
+    volumes:
+      - "/mnt/tiles:/mnt/tiles"
