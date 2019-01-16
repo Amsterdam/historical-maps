@@ -1,5 +1,7 @@
 # Dienst der Publieke Werken
 
+Tools, scripts and data to generate tiles for Dienst der Publieke werken maps.
+
 This repository contains:
 
 - GDAL scripts to create tiles from scanned maps
@@ -28,7 +30,7 @@ To see all available options, run:
 
 To generate a script to download the 1943 map and create EPSG:28922 GeoTIFFs:
 
-   ./index.js -s sheets/sheets.geojson -g sheets/1943.json \
+    ./index.js -s sheets/sheets.geojson -g sheets/1943.json \
       -o 1943 -b /srv/mapserver/publieke-werken -k \
       --retile false -p 28992 > 1943-28992.sh
 
