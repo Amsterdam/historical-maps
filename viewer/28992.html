@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dienst der Publieke Werken (1943)</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="map"></div>
+  <div id="slider-container">
+    <label for="slider">Opacity:</label>
+    <input id="slider" type="range" min="1" max="100" step="1" value="100">
+  </div>
+  <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"></script>
+  <script src="proj4-compressed.js"></script>
+  <script src="proj4leaflet.js"></script>
+  <script>
+    var RD = new L.Proj.CRS(
+      'EPSG:28992',
+      '+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 ' +
+        '+k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +units=m ' +
+        '+towgs84=565.2369,50.0087,465.658,-0.406857330322398,0.350732676542563,-1.8703473836068,4.0812 +no_defs',
+      {
+        origin: [-285401.92, 22598.08],
+        resolutions: [3440.640, 1720.320, 860.160, 430.080, 215.040, 107.520, 53.760, 26.880, 13.440,
+          6.720, 3.360, 1.680, 0.840, 0.420, 0.210, 0.105],
+        bounds: L.bounds([-285401.92, 22598.08], [595401.920, 903401.920])
+      }
+    )
+
+    var subdomains = ['t1', 't2', 't3', 't4']
+
+    var amsterdamLayer = new L.tileLayer('https://{s}.data.amsterdam.nl/topo_rd/{z}/{x}/{y}.png', {
+      maxZoom: 16,
+      minZoom: 8,
+      tms: true,
+      subdomains: subdomains
+    })
+
+    var publiekeWerken1943 = L.tileLayer.wms('https://acc.{s}.data.amsterdam.nl/publieke-werken-1943-rd/{z}/{x}/{y}.png', {
+      maxZoom: 16,
+      minZoom: 8,
+      tms: true,
+      subdomains: subdomains
+    })
+
+    var map = new L.Map('map', {
+      crs: RD,
+      layers: [amsterdamLayer, publiekeWerken1943]
+    })
+
+    var center = L.point(121854, 487080)
+    map.setView(RD.projection.unproject(center), 10)
+
+    var slider = document.getElementById('slider')
+
+    function updateOpacity () {
+      var opacity = slider.value / 100
+      publiekeWerken1943.setOpacity(opacity)
+    }
+
+    slider.addEventListener('input', updateOpacity)
+    // In IE<=11, input event does not work
+    slider.addEventListener('change', updateOpacity)
+    updateOpacity()
+  </script>
+</body>
+</html>
