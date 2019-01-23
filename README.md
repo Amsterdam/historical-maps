@@ -1,6 +1,8 @@
 # Dienst der Publieke Werken
 
-Tools, scripts and data to generate tiles for Dienst der Publieke werken maps.
+Tools, scripts and data to generate tiles for _Dienst der Publieke Werken_ maps.
+
+[![Dienst der Publieke Werken (1943)](screenshots/1943.png)](https://amsterdam.github.io/publieke-werken/viewer/28992.html)
 
 This repository contains:
 
@@ -13,6 +15,10 @@ This repository will eventually contain:
 - Links to [Stadsarchief Beeldbank](https://beeldbank.amsterdam.nl/beeldbank)
 - Links to generated tiles (both in EPSG:28992 and EPSG:3857)
 - Leaflet viewers to display those tiles
+
+## Maps
+
+ - [Dienst der Publieke Werken (1943)](https://amsterdam.github.io/publieke-werken/viewer/28992.html)
 
 ## Usage
 
