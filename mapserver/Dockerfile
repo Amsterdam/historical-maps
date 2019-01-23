@@ -53,8 +53,6 @@ COPY docker/docker-entrypoint.sh /bin
 #
 
 COPY . /srv/mapserver/
-RUN rm -rf /srv/mapserver/private
-
 
 EXPOSE 80
 

@@ -2,15 +2,24 @@ seeds:
   kaart_rd:
     caches: [kaart_rd_cache]
     grids: [nl_grid]
-    coverages: ['kaart']
+    coverages: ['kaart1943']
     levels:
       from: 5
       to: 16
+    refresh_before:
+      minutes: 1
+
 
 coverages:
-  kaartwm:
+  kaartrd:
     bbox: [104000,474000,136000,502100]
     srs: 'EPSG:28992'
-  kaart:
+  kaartwm:
     bbox: [4.72876,52.2782,5.07916,52.4311]
     srs: 'EPSG:4326'
+  kaart1943:
+    bbox: [117649, 482500, 126200, 492251]
+    srs: 'EPSG:28992'
+# Generate bounding box based on shape file:
+# `ogrinfo index.shp --config SHAPE_RESTORE_SHX TRUE -al -so`
+

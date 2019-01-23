@@ -24,7 +24,7 @@ services:
 layers:
   - name: kaart_rd
     title: Historische Kaarten RD
-    sources: [kaart_rd_tiles]
+    sources: [kaart_wms]
 
 caches:
   kaart_rd_cache:
@@ -41,8 +41,9 @@ sources:
   kaart_wms:
     type: wms
     req:
-      url: http://localhost:80/maps/publieke-werken
+      url: http://mapserver/maps/publieke-werken
       layers: publieke-werken-1943-28992
+      transparent: true
 
 grids:
   nl_grid:
