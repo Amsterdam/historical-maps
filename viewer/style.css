@@ -10,11 +10,13 @@ html, body {
 }
 
 #slider-container {
-  border-width: 2px;
-  border-color: rgba(0, 0, 0, 0.5);
-  border-style: solid;
   width: 30%;
-  box-sizing: border-box;
+  box-sizing: border-box; 
+  
+  border: 2px solid rgba(0,0,0,0.2);
+  background-clip: padding-box;
+  border-radius: 2px;
+  
   left: calc(50% - 15%);
   z-index: 9999;
   position: absolute;
@@ -22,7 +24,6 @@ html, body {
   margin: 0 auto;
   background-color: white;
   padding: .5em 1em;
-  border-radius: 20px;
   display: flex;
 }
 
