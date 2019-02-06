@@ -42,7 +42,7 @@ sources:
     type: wms
     req:
       url: http://mapserver/maps/publieke-werken
-      layers: publieke-werken-1943-28992
+      layers: publieke-werken-1985-28992
       transparent: true
 
 grids:
