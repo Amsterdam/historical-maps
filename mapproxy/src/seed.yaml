@@ -2,7 +2,7 @@ seeds:
   kaart_rd:
     caches: [kaart_rd_cache]
     grids: [nl_grid]
-    coverages: ['kaart1985']
+    coverages: ['kaart1909']
     levels:
       from: 5
       to: 16
@@ -17,6 +17,9 @@ coverages:
   kaartwm:
     bbox: [4.72876,52.2782,5.07916,52.4311]
     srs: 'EPSG:4326'
+  kaart1909:
+    bbox: [117784, 483233, 126330, 492428]
+    srs: 'EPSG:28992'
   kaart1943:
     bbox: [117649, 482500, 126200, 492251]
     srs: 'EPSG:28992'

@@ -25,13 +25,38 @@ MAP
   END
 
   #=============================================================================
+  # 1909: Dienst der Publieke Werken
+  #=============================================================================
+
+  LAYER
+    NAME                    "publieke-werken-1909-28992"
+    GROUP                   "publieke-werken-1909-28992"
+    TILEINDEX               "/srv/mapserver/kaarten/1909/index.shp"
+    TILEITEM                "location"
+    TYPE                    RASTER
+    PROJECTION
+      "init=epsg:28992"
+    END
+
+    METADATA
+      "ows_title"           "Dienst der Publieke Werken (1909)"
+      "ows_group_title"     "Dienst der Publieke Werken (1909)"
+      "ows_abstract"        "Dienst der Publieke Werken (1909)"
+      "wms_srs"             "EPSG:28992"
+      "wms_name"            "publieke-werken"
+      "wms_format"          "image/tiff"
+      "wms_server_version"  "1.1.1"
+    END
+  END
+
+  #=============================================================================
   # 1943: Dienst der Publieke Werken
   #=============================================================================
 
   LAYER
     NAME                    "publieke-werken-1943-28992"
     GROUP                   "publieke-werken-1943-28992"
-    TILEINDEX               "/srv/mapserver/publieke-werken/1943/28992/index/index.shp"
+    TILEINDEX               "/srv/mapserver/kaarten/1943/index.shp"
     TILEITEM                "location"
     TYPE                    RASTER
     PROJECTION

@@ -7,7 +7,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - /mnt/kaart/publieke-werken/1985/28992/warped/:/srv/mapserver/publieke-werken/1985/28992/warped/
+      - /mnt/kaart/publieke-werken/1909/28992/warped/:/srv/mapserver/publieke-werken/1909/28992/warped/
 
   kaart:
     container_name: mapproxy
