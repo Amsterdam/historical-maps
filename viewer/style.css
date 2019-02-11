@@ -15,6 +15,11 @@ html, body {
   border-radius: 4px;
   width: 30%;
   box-sizing: border-box;
+
+  border: 2px solid rgba(0,0,0,0.2);
+  background-clip: padding-box;
+  border-radius: 2px;
+
   left: calc(50% - 15%);
   z-index: 9999;
   position: absolute;
