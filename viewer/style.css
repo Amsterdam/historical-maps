@@ -2,6 +2,7 @@ html, body {
   height: 100%;
   padding: 0;
   margin: 0;
+  font-family: monospace;
 }
 
 #map {
@@ -10,9 +11,8 @@ html, body {
 }
 
 #slider-container {
-  border-width: 2px;
-  border-color: rgba(0, 0, 0, 0.5);
-  border-style: solid;
+  border: 2px solid rgba(0,0,0,0.2);
+  border-radius: 4px;
   width: 30%;
   box-sizing: border-box;
   left: calc(50% - 15%);
@@ -22,7 +22,6 @@ html, body {
   margin: 0 auto;
   background-color: white;
   padding: .5em 1em;
-  border-radius: 20px;
   display: flex;
 }
 
