@@ -31,7 +31,7 @@
     )
 
     var url = new URL(window.location.href)
-    var layer = parseInt(url.searchParams.get('layer'))
+    var layer = url.searchParams.get('layer')
 
     if (!layer) {
       layer = 'publieke-werken-1909-rd'
@@ -67,7 +67,7 @@
 
     function updateOpacity () {
       var opacity = slider.value / 100
-      publiekeWerken1943.setOpacity(opacity)
+      tileLayer.setOpacity(opacity)
     }
 
     slider.addEventListener('input', updateOpacity)
