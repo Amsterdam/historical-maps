@@ -63,10 +63,16 @@ globals:
     base_dir: '/app'
     lock_dir: '/app'
     tile_lock_dir: '/app'
-    meta_size: [4, 4]
-    meta_buffer: 128
+
+
+    # meta_size: [4, 4]
+    # meta_buffer: 128
+
+    # https://lists.osgeo.org/pipermail/mapproxy/2012-April/001051.html
+    meta_size: [1, 1]
+    meta_buffer: 0
   http:
     ssl_no_cert_checks: True
 
   image:
-      resampling_method: bicubic
+    resampling_method: nearest
