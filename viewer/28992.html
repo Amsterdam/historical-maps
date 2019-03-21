@@ -14,8 +14,8 @@
   </div>
   <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"></script>
   <script src="leaflet-hash.js"></script>
-  <script src="proj4-compressed.js"></script>
-  <script src="proj4leaflet.js"></script>
+  <script src="https://unpkg.com/proj4js@1.3.4/proj4js/dist/proj4.js"></script>
+  <script src="https://unpkg.com/proj4leaflet@1.0.2/src/proj4leaflet.js"></script>
   <script>
     var RD = new L.Proj.CRS(
       'EPSG:28992',
@@ -31,7 +31,7 @@
     )
 
     var url = new URL(window.location.href)
-    var layer = parseInt(url.searchParams.get('layer'))
+    var layer = url.searchParams.get('layer')
 
     if (!layer) {
       layer = 'publieke-werken-1909-rd'
@@ -67,7 +67,7 @@
 
     function updateOpacity () {
       var opacity = slider.value / 100
-      publiekeWerken1943.setOpacity(opacity)
+      tileLayer.setOpacity(opacity)
     }
 
     slider.addEventListener('input', updateOpacity)
