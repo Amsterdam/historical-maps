@@ -1,8 +1,8 @@
-# Dienst der Publieke Werken
+# Historical Maps for data.amsterdam.nl
 
-Tools, scripts and data to generate tiles for _Dienst der Publieke Werken_ maps.
+Tools, scripts and data to generate tiles for data.amsterdam.nl from scanned historical maps from the Amsterdam City Archives.
 
-[![Dienst der Publieke Werken (1943)](screenshots/1943.png)](https://amsterdam.github.io/publieke-werken/viewer/28992.html)
+[![Dienst der Publieke Werken (1943)](screenshots/1943.png)](https://amsterdam.github.io/historical-maps/viewer/28992.html)
 
 This repository contains:
 
