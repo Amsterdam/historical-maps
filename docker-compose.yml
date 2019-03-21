@@ -5,17 +5,19 @@ services:
     build: mapserver
     user: root
     ports:
-      - "80:80"
+      - 80:80
     volumes:
-      - /mnt/publieke-werken/:/srv/mapserver/publieke-werken/
+      # Format: host path : container path
+      - ./mapserver:/srv/mapserver
+      - ./output:/srv/historical-maps
 
-  kaart:
+  mapproxy:
     container_name: mapproxy
     build: mapproxy
     user: root
     depends_on:
       - mapserver
-    command: >
-      mapproxy-seed -c 6 -s /app/seed.yaml -f /app/mapproxy.yaml --seed=kaart_rd
     volumes:
-      - "/mnt/tiles:/mnt/tiles"
+      # Format: host path : container path
+      - ./mapproxy:/app
+      - ./output/tiles:/mnt/tiles

@@ -10,7 +10,7 @@ html, body {
   height: 100%;
 }
 
-#slider-container {
+#controls {
   border: 2px solid rgba(0,0,0,0.2);
   border-radius: 4px;
   width: 30%;
@@ -42,8 +42,12 @@ html, body {
 }
 
 @media (max-width: 1000px) {
-  #slider-container {
+  #controls {
     width: 95%;
     left: 2.5%;
   }
+}
+
+#animation-controls {
+  display: flex;
 }

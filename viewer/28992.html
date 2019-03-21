@@ -17,36 +17,6 @@
   <script src="proj4-compressed.js"></script>
   <script src="proj4leaflet.js"></script>
   <script>
-    if (!Array.prototype.includes) {
-      Object.defineProperty(Array.prototype, 'includes', {
-        value: function(valueToFind, fromIndex) {
-          if (this == null) {
-            throw new TypeError('"this" is null or not defined')
-          }
-          var o = Object(this)
-          var len = o.length >>> 0
-
-          if (len === 0) {
-            return false
-          }
-
-          var n = fromIndex | 0;
-          var k = Math.max(n >= 0 ? n : len - Math.abs(n), 0)
-          function sameValueZero(x, y) {
-            return x === y || (typeof x === 'number' && typeof y === 'number' && isNaN(x) && isNaN(y))
-          }
-
-          while (k < len) {
-            if (sameValueZero(o[k], valueToFind)) {
-              return true
-            }
-            k++
-          }
-          return false
-        }
-      })
-    }
-
     var RD = new L.Proj.CRS(
       'EPSG:28992',
       '+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 ' +
@@ -60,14 +30,11 @@
       }
     )
 
-    var yearDefault = 1943
-    var years = [1909, 1943, 1985]
-
     var url = new URL(window.location.href)
-    var year = parseInt(url.searchParams.get('year'))
+    var layer = parseInt(url.searchParams.get('layer'))
 
-    if (!years.includes(year)) {
-      year = yearDefault
+    if (!layer) {
+      layer = 'publieke-werken-1909-rd'
     }
 
     var subdomains = ['t1', 't2', 't3', 't4']
@@ -79,7 +46,7 @@
       subdomains: subdomains
     })
 
-    var publiekeWerken1943 = L.tileLayer.wms('https://{s}.data.amsterdam.nl/publieke-werken-' + year + '-rd/{z}/{x}/{y}.png', {
+    var tileLayer = L.tileLayer('https://{s}.data.amsterdam.nl/' + layer + '/{z}/{x}/{y}.png', {
       maxZoom: 15,
       minZoom: 8,
       tms: true,
@@ -88,9 +55,8 @@
 
     var map = new L.Map('map', {
       crs: RD,
-      layers: [amsterdamLayer, publiekeWerken1943]
+      layers: [amsterdamLayer, tileLayer]
     })
-
 
     var center = L.point(121854, 487080)
     map.setView(RD.projection.unproject(center), 10)

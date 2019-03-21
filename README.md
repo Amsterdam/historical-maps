@@ -16,35 +16,45 @@ This repository will eventually contain:
 - Links to generated tiles (both in EPSG:28992 and EPSG:3857)
 - Leaflet viewers to display those tiles
 
-## Maps
+## Maps & Tiles
 
- - [Dienst der Publieke Werken (1943)](https://amsterdam.github.io/publieke-werken/viewer/28992.html)
+The following historical maps are currently availeble on data.amsterdam.nl:
 
-## Usage
+| Year | Scale | Projection  | ID                             |
+|:-----|:-------|:-----------|:-------------------------------|
+| 1909 | 1:1000 | EPSG:28992 | `publieke-werken-1909-rd`      |
+| 1943 | 1:1000 | EPSG:28992 | `publieke-werken-1943-rd`      |
+| 1943 | 1:2500 | EPSG:28992 | `publieke-werken-1943-2500-rd` |
+| 1985 | 1:1000 | EPSG:28992 | `publieke-werken-1985-rd`      |
 
-### Generate GDAL script
+You can use the following tile URLs:
 
-[`index.js`](index.js) is a Node.js tool to generate a shell script which downloads map sheets, translates and warps them, and creates a tile index.
+| Jaar                                       | Tile-URL                            |
+|:-------------------------------------------|:------------------------------------|
+| [Dienst der Publieke Werken (1909, 1:1000)](https://amsterdam.github.io/historical-maps/viewer/28992.html?layer=publieke-werken-1909-rd#13/52.3591/4.9088) | `https://{s}.data.amsterdam.nl/publieke-werken-1909-rd/{z}/{x}/{y}.png` |
+| [Dienst der Publieke Werken (1943, 1:1000)](https://amsterdam.github.io/historical-maps/viewer/28992.html?layer=publieke-werken-1943-rd#14/52.3612/4.9571) | `https://{s}.data.amsterdam.nl/publieke-werken-1943-rd/{z}/{x}/{y}.png` |
+| [Dienst der Publieke Werken (1943, 1:2500)](https://amsterdam.github.io/historical-maps/viewer/28992.html?publieke-werken-1943-2500-rd#12/52.3555/4.8546) | `https://{s}.data.amsterdam.nl/publieke-werken-1943-2500-rd/{z}/{x}/{y}.png` |
+| [Dienst der Publieke Werken (1985, 1:1000)](https://amsterdam.github.io/historical-maps/viewer/28992.html?layer=publieke-werken-1985-rd#14/52.3627/4.8827) | `https://{s}.data.amsterdam.nl/publieke-werken-1985-rd/{z}/{x}/{y}.png` |
 
-First, make sure you have GDAL and Node.js installed, then install the dependencies:
+Bounding boxes:
 
-    npm install
+| ID                             | Bounding box                             |
+|:-------------------------------|------------------------------------------|
+| `publieke-werken-1909-rd`      | `[[52.3361, 4.8404], [52.4185, 4.9662]]` |
+| `publieke-werken-1943-rd`      | `[[52.3292, 4.8382], [52.4173, 4.9646]]` |
+| `publieke-werken-1943-2500-rd` |                                          |
+| `publieke-werken-1985-rd`      | `[[52.2756, 4.7402], [52.4374, 5.0479]]` |
 
-To see all available options, run:
+Four subdomains are available for our tile servers, you can tell Leaflet to substitute the `{s}` template with one of the strings `t1`, `t2`, `t3` or `t4`:
 
-    ./index.js
+```js
+var tileUrl = 'https://{s}.data.amsterdam.nl/publieke-werken-1909-rd/{z}/{x}/{y}.png'
 
-To generate a script to download the 1943 map and create EPSG:28922 GeoTIFFs:
-
-    ./index.js -s sheets/sheets.geojson -g sheets/1943.json \
-      -o 1943 -b /srv/mapserver/publieke-werken -k \
-      --retile false -p 28992 > 1943-28992.sh
-
-Then, run this script:
-
-    chmod +x 1943-28992.sh && ./1943-28992.sh
-
-In the end, the directory `./1943/28992/` will contain warped GeoTIFFs and the tile index.
+L.tileLayer(tileUrl, {
+  subdomains: ['t1', 't2', 't3', 't4'],
+  maxZoom: 17
+}).addTo(map)
+```
 
 ## See Also
 

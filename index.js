@@ -38,6 +38,11 @@ const argv = require('yargs')
     default: 3857,
     type: 'string'
   })
+  .option('quality', {
+    alias: 'q',
+    describe: 'JPEG quality',
+    default: 90
+  })
   .option('baseDir', {
     alias: 'b',
     describe: 'absolute base directory for resulting Shapefiles',
@@ -71,18 +76,16 @@ const after1940 = ([x, y]) => ([
 
 const before1940 = ([x, y]) => {
   // Omrekening PW-coordinaten vóór 1940 (rotatie: 2 graden, nulpunt: Prinsenhof):
+  x += 33552
+  y -= 24000
+
   const degrees = -2
   const radians = (degrees / 180) * Math.PI
 
   return [
-    x * Math.cos(radians) - y * Math.sin(radians) + 154220,
-    x * Math.sin(radians) + y * Math.cos(radians) + 461923
+    x * Math.cos(radians) - y * Math.sin(radians) + 121528,
+    x * Math.sin(radians) + y * Math.cos(radians) + 487081
   ]
-
-  // return [
-  //   x * Math.cos(radians) - y * Math.sin(radians) + 121528,
-  //   x * Math.sin(radians) + y * Math.cos(radians) + 487081
-  // ]
 }
 
 function cornerToRdBbox (corner) {
@@ -138,13 +141,23 @@ gcps.forEach((sheet) => {
   const sheetNumber = sheet.filename.split('_')[0]
   const corner = cornersBySheet[sheetNumber]
 
+  if (!corner) {
+    const message = `Error! Sheet not found: ${sheetNumber}`
+    console.error(message)
+    console.log(`
+# =============================================================================================
+# 😩 ${message}
+# =============================================================================================
+    `)
+    return
+  }
+
   const gcps = [
     [sheet.x1, sheet.scanHeight - sheet.y1],
     [sheet.x2, sheet.scanHeight - sheet.y2],
     [sheet.x3, sheet.scanHeight - sheet.y3],
     [sheet.x4, sheet.scanHeight - sheet.y4]
   ]
-
   const rdBbox = cornerToRdBbox(corner)
   const polygon = rdBboxToPolygon(rdBbox)
 
@@ -156,10 +169,6 @@ gcps.forEach((sheet) => {
 
   const vrtFilename = `${path.join(warpedDir, basename)}.vrt`
   const geojsonFilename = `${path.join(warpedDir, basename)}.geojson`
-
-  // To turn off JPEG compression, use:
-  // -co COMPRESS=LZW -srcnodata "0 0 0" -dstalpha
-  // TODO: maybe add this as an command line option
 
   console.log(`
 # =============================================================================================
@@ -180,12 +189,12 @@ gdal_translate -of vrt \\
 echo '${JSON.stringify(polygon)}' > ${geojsonFilename}
 
 gdalwarp -co TILED=YES \\
-  -co COMPRESS=JPEG -co PHOTOMETRIC=YCBCR -co JPEG_QUALITY=90 \\
-  -overwrite \\
+  -co COMPRESS=JPEG -co JPEG_QUALITY=${argv.quality} \\
+  -dstalpha -overwrite \\
   -cutline ${geojsonFilename} -crop_to_cutline \\
-  -tr 0.1 0.1 -t_srs "EPSG:${argv.projection}" -tps -r cubic \\
+  -tr 0.1 0.1 -t_srs "EPSG:${argv.projection}" \\
   ${vrtFilename} \\
-  ${path.join(warpedDir, basename)}-warped.tif;
+  ${path.join(warpedDir, basename)}-warped.tif
 
 rm ${geojsonFilename}
 ${argv.keep ? '' : `rm ${path.join(outputDir, sheet.filename)}`}
