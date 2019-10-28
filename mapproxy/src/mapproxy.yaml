@@ -3,7 +3,7 @@ services:
   wmts:
     md:
       # metadata used in capabilities documents
-      title: City Data Amsterdam
+      title: Data en Informatie Amsterdam
       abstract: Map tile service Gemeente Amsterdam
       online_resource: https://data.amsterdam.nl/
       contact:
