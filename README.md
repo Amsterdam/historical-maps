@@ -1,6 +1,8 @@
 # Historical Maps for data.amsterdam.nl
 
-Tools, scripts and data to generate tiles for data.amsterdam.nl from scanned historical maps from the Amsterdam City Archives.
+__The Amsterdam City Archives recently [updated its image portal](https://archief.amsterdam/beeldbank). The links to high resolution maps used in this repository no longer work. There must be a way to download these maps from the new image portal as well, but [Picturae](https://picturae.com/en/) has made that annoyingly complicated.__
+
+Tools, scripts and data to generate tiles for [data.amsterdam.nl](https://data.amsterdam.nl/data/?modus=kaart&center=52.3747993%2C4.8918253&lagen=pw1943-2500%3A1&legenda=true&zoom=10) from scanned historical maps from the [Amsterdam City Archives](https://www.amsterdam.nl/stadsarchief).
 
 [![Dienst der Publieke Werken (1943)](screenshots/1943.png)](https://amsterdam.github.io/historical-maps/viewer/28992.html)
 
@@ -9,12 +11,6 @@ This repository contains:
 - GDAL scripts to create tiles from scanned maps
 - MapServer and MapProxy Dockerfiles, to turn warped GeoTIFFs into tiles
 - GeoJSON data of map sheets, collected and georectified by [Jan Hartmann](http://www.uva.nl/en/profile/h/a/j.l.h.hartmann/j.l.h.hartmann.html)
-
-This repository will eventually contain:
-
-- Links to [Stadsarchief Beeldbank](https://beeldbank.amsterdam.nl/beeldbank)
-- Links to generated tiles (both in EPSG:28992 and EPSG:3857)
-- Leaflet viewers to display those tiles
 
 ## Maps & Tiles
 
@@ -55,6 +51,45 @@ L.tileLayer(tileUrl, {
   maxZoom: 17
 }).addTo(map)
 ```
+
+### Generate GDAL script
+
+Georecticitation data for Amsterdam City Archives maps is available in the repository https://github.com/Amsterdam/city-archives-georectification. The scripts below expect this data to be available in `../city-archives-georectification`.
+
+First, make sure you have GDAL and Node.js installed, then install the dependencies:
+
+    npm install
+
+Some examples:
+
+		./publieke-werken.js -s ./source-data/publieke-werken/sheets.geojson --gcps ../city-archives-georectification/vele-handen.geojson --series ./source-data/publieke-werken/series.json -y 1950 -o ../output/publieke-werken > gdal-scripts/publieke-werken-1950-28992.sh
+
+		./publieke-werken-2500.js -g ../city-archives-georectification/publieke-werken-2500.geojson -o ../output/publieke-werken-2500 -y 1943 -p 3857 > gdal-scripts/publieke-werken-2500-1943-3857.sh
+
+		./publieke-werken-2500.js -g ../city-archives-georectification/publieke-werken-2500.geojson -o ../output/publieke-werken-2500 -y 1943 -p 28992 > gdal-scripts/publieke-werken-2500-1943-28992.sh
+
+		./atlas-loman.js > gdal-scripts/atlas-loman-28992.sh
+
+### Series
+
+The following scripts create map series for Dienst der Publieke Werken maps. For each decade, the script picks the newest map available map for every sheet.
+
+		cat ./source-data/publieke-werken/inventory/*.txt | ./parse-publieke-werken-inventory.js | ./group-by-sheet.js > ./source-data/publieke-werken/maps-by-sheet.ndjson
+
+		./generate-series.js data < ./source-data/publieke-werken/maps-by-sheet.ndjson > ./source-data/publieke-werken/series.json
+		./generate-series.js log < ./source-data/publieke-werken/maps-by-sheet.ndjson > ./source-data/publieke-werken/series.txt
+
+## Generate tiles
+
+To create tiles from a WMS layer, you can use the MapProxy Docker configuration in this repository. First, adapt the Mapfiles in the [`mapserver`](mapserver) directory: `publieke-werken.map` and/or `atlas-loman.map`, or create a new Mapfile.
+
+Then:
+
+		docker-compose build mapproxy
+
+And:
+
+		docker-compose run mapproxy seed.sh publieke_werken_2500_1943
 
 ## See Also
 

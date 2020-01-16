@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="map"></div>
+  <div id="slider-container">
+    <label for="slider">Opacity:</label>
+    <input id="slider" type="range" min="1" max="100" step="1" value="100">
+  </div>
+  <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"></script>
+  <script>
+    var amsterdamLayer = new L.tileLayer('https://b.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      minZoom: 10
+    })
+
+    var historicalLayer = L.tileLayer.wms('http://localhost:8383/maps/historical', {
+      transparency: 'true',
+      transparent: 'true',
+      layers: '_pw1943',
+      format: 'image/png',
+      maxZoom: 19
+    })
+
+    var map = new L.Map('map', {
+      layers: [amsterdamLayer, historicalLayer]
+    })
+
+    map.setView([52.367, 4.915], 14)
+
+    var slider = document.getElementById('slider')
+    function updateOpacity() {
+      var opacity = slider.value / 100
+      historicalLayer.setOpacity(opacity)
+    }
+
+    slider.addEventListener('input', updateOpacity)
+    // In IE<=11, input event does not work
+    slider.addEventListener('change', updateOpacity)
+    updateOpacity()
+  </script>
+</body>
+</html>

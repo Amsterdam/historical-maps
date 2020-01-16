@@ -1,16 +1,6 @@
 FROM ubuntu:18.04
 MAINTAINER datapunt@amsterdam.nl
 
-# !!
-# modified to use mapserver from apt-get.
-#
-
-#ENV LD_LIBRARY_PATH=/usr/lib:/usr/local/lib
-#ENV LIBKML_DOWNLOAD=install-libkml-r864-64bit.tar.gz
-#ENV FILEGDBAPI_DOWNLOAD=FileGDB_API_1_2-64.tar.gz
-#ENV MRSID_DIR=MrSID_DSDK-8.5.0.3422-linux.x86-64.gcc44
-#ENV MRSID_DOWNLOAD=MrSID_DSDK-8.5.0.3422-linux.x86-64.gcc44.tar.gz
-
 RUN apt-get update && apt-get install -my wget gnupg -y
 RUN apt install build-essential -y
 
@@ -33,7 +23,6 @@ RUN apt-get install -y gdal-bin libgdal-dev gdal-data libgdal20
 RUN apt-get install -y apache2 apache2-utils libmapcache1 libapache2-mod-mapcache cgi-mapserver \
       mapserver-bin libmapserver-dev
 
-
 # Force buit libraries dependencies
 RUN ldconfig
 
@@ -43,16 +32,9 @@ RUN  a2enmod actions cgi alias headers rewrite
 # Configure localhost in Apache
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 RUN rm /etc/apache2/mods-enabled/alias.conf
-COPY docker/000-default.conf /etc/apache2/sites-available/
-COPY docker/docker-entrypoint.sh /bin
 
-# Link to cgi-bin executable
-# RUN chmod o+x /usr/local/bin/mapserv
-# RUN ln -s /usr/local/bin/mapserv /usr/lib/cgi-bin/mapserv
-# RUN chmod 755 /usr/lib/cgi-bin
-#
-
-COPY . /srv/mapserver/
+COPY ./docker/000-default.conf /etc/apache2/sites-available/
+COPY ./docker/docker-entrypoint.sh /bin
 
 EXPOSE 80
 
