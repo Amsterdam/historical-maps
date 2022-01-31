@@ -9,15 +9,13 @@ import { hideBin } from 'yargs/helpers'
 import { getImageUrl } from '../lib/beeldbank.js'
 import { sourceDataFilename, readFile, readJson } from '../lib/io.js'
 
-const argv = yargs(hideBin(process.argv))
-	.option('year', {
-		alias: 'y',
-		describe: 'Map series year',
-		type: 'number',
-		choices: [1909, 1943, 1985],
-		demandOption: true
-	})
-	.argv
+const argv = yargs(hideBin(process.argv)).option('year', {
+  alias: 'y',
+  describe: 'Map series year',
+  type: 'number',
+  choices: [1909, 1943, 1985],
+  demandOption: true
+}).argv
 
 const EPSG_28992 = `+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.9999079
   +x_0=155000 +y_0=463000 +ellps=bessel +towgs84=565.417,50.3319,465.552,-0.398957,0.343988,-1.8774,4.0725
@@ -26,17 +24,14 @@ const project = proj4(EPSG_28992, 'WGS84')
 
 const sheetDimensions = [950, 750] // in meters
 
-function after1940 ([x, y]) {
-	return [
-  	x + 155000,
-  	y + 463000
-	]
+function after1940([x, y]) {
+  return [x + 155000, y + 463000]
 }
 
-function before1940 ([x, y]) {
+function before1940([x, y]) {
   // Transformation of map sheet coordinates of maps before 1940:
-	// - Rotation 2 degrees,
-	// - Point [0, 0] = https://nl.wikipedia.org/wiki/Prinsenhof_(Amsterdam)
+  // - Rotation 2 degrees,
+  // - Point [0, 0] = https://nl.wikipedia.org/wiki/Prinsenhof_(Amsterdam)
 
   x += 33552
   y -= 24000
@@ -50,7 +45,7 @@ function before1940 ([x, y]) {
   ]
 }
 
-function cornerToRdBbox (corner) {
+function cornerToRdBbox(corner) {
   const corner2 = [
     corner[0] + sheetDimensions[0],
     corner[1] + sheetDimensions[1]
@@ -67,12 +62,10 @@ function cornerToRdBbox (corner) {
   return argv.year > 1940 ? bbox.map(after1940) : bbox.map(before1940)
 }
 
-function rdBboxToGeoMask (bbox) {
+function rdBboxToGeoMask(bbox) {
   return {
     type: 'Polygon',
-    coordinates: [
-      bbox.map(project.forward)
-    ]
+    coordinates: [bbox.map(project.forward)]
   }
 }
 
@@ -83,72 +76,83 @@ const allMetadata = parse(readFile(sourceDataFilename('publieke-werken.csv')), {
   skip_empty_lines: true
 })
 
-const cornersBySheetNumber = geoMasks.features
-  .reduce((cornersBySheetNumber, feature) => ({
+const cornersBySheetNumber = geoMasks.features.reduce(
+  (cornersBySheetNumber, feature) => ({
     ...cornersBySheetNumber,
     [feature.properties.BLAD]: [
       feature.properties.MINX2,
       feature.properties.MINY2
     ]
-  }), {})
+  }),
+  {}
+)
 
-const metadataBySheetNumber = allMetadata
-	.reduce((metadataBySheetNumber, row) => ({
-		...metadataBySheetNumber,
+const metadataBySheetNumber = allMetadata.reduce(
+  (metadataBySheetNumber, row) => ({
+    ...metadataBySheetNumber,
     [row.blad]: {
-			...metadataBySheetNumber[row.blad],
-			[row['bestand-nr']]: row
-		}
-  }), {})
+      ...metadataBySheetNumber[row.blad],
+      [row['bestand-nr']]: row
+    }
+  }),
+  {}
+)
 
-async function createMap (sheet) {
-	const match = /(?<sheetNumber>\w+?)_(?<fileNumber>\d+?)_/
-		.exec(sheet.filename)
+async function createMap(sheet) {
+  const match = /(?<sheetNumber>\w+?)_(?<fileNumber>\d+?)_/.exec(sheet.filename)
 
-	const { sheetNumber, fileNumber } = match.groups
+  if (!match) {
+    console.error(`Error parsing filename: ${sheet.filename}`)
+    return
+  }
 
-	if (cornersBySheetNumber[sheetNumber]) {
-		const corner = cornersBySheetNumber[sheetNumber]
+  const { sheetNumber, fileNumber } = match.groups
 
-		const rdBbox = cornerToRdBbox(corner)
-		const geoMask = rdBboxToGeoMask(rdBbox)
+  if (cornersBySheetNumber[sheetNumber]) {
+    const corner = cornersBySheetNumber[sheetNumber]
 
-		const metadata = metadataBySheetNumber[sheetNumber][parseInt(fileNumber)]
+    const rdBbox = cornerToRdBbox(corner)
+    const geoMask = rdBboxToGeoMask(rdBbox)
 
-		if (!metadata) {
-			throw new Error(`No metadata for ${sheet.filename}`)
-		}
+    const metadata = metadataBySheetNumber[sheetNumber][parseInt(fileNumber)]
 
-		const imageId = metadata.bestand
-		const imageUrl = await getImageUrl(imageId)
+    if (!metadata) {
+      // throw new Error(`No metadata for ${sheet.filename}`)
+      console.error(`No metadata for ${sheet.filename}`)
+      return
+    }
 
-		const mask = [
-			[sheet.x1, sheet.scanHeight - sheet.y1],
-			[sheet.x2, sheet.scanHeight - sheet.y2],
-			[sheet.x3, sheet.scanHeight - sheet.y3],
-			[sheet.x4, sheet.scanHeight - sheet.y4]
-		]
+    const imageId = metadata.bestand
+    const imageUrl = await getImageUrl(imageId)
 
-		const gcps = mask.map((image, index) => ({
-			image,
-			world: geoMask.coordinates[0][index]
-		}))
+    const mask = [
+      [sheet.x1, sheet.scanHeight - sheet.y1],
+      [sheet.x2, sheet.scanHeight - sheet.y2],
+      [sheet.x4, sheet.scanHeight - sheet.y4],
+      [sheet.x3, sheet.scanHeight - sheet.y3]
+    ]
 
-		return {
-			id: imageId,
-			imageUrl,
-			mask,
-			geoMask,
-			gcps
-		}
-	} else {
-		throw new Error(`No geoMask found for for ${sheetNumber}`)
-	}
+    const gcps = mask.map((image, index) => ({
+      image,
+      world: geoMask.coordinates[0][3 - index]
+    }))
+
+    return {
+      id: imageId,
+      imageUrl,
+      mask,
+      geoMask,
+      gcps
+    }
+  } else {
+    // throw new Error(`No geoMask found for for ${sheetNumber}`)
+    console.error(`No geoMask found for for ${sheetNumber}`)
+  }
 }
 
 H(sheets)
-	.flatMap((feature) => H(createMap(feature)))
-	.map(JSON.stringify)
-	.intersperse('\n')
-	.pipe(process.stdout)
-
+  .flatMap((feature) => H(createMap(feature)))
+  .compact()
+  .map(JSON.stringify)
+  .intersperse('\n')
+  .pipe(process.stdout)
