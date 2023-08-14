@@ -77,7 +77,7 @@ packages:
     engines: {node: '>= 10'}
     hasBin: true
     dependencies:
-      minimist: 1.2.5
+      minimist: 1.2.8
     dev: false
 
   /emoji-regex@8.0.0:
@@ -119,8 +119,8 @@ packages:
     resolution: {integrity: sha1-+5FYjnjJACVnI5XLQLJffNatGCk=}
     dev: false
 
-  /minimist@1.2.5:
-    resolution: {integrity: sha512-FM9nNUYrRBAELZQT3xeZQ7fmMOBg6nWNmJKTcgsJeaLstP/UODVpGsr5OhXhhXg6f+qtJ8uiZ+PUxkDWcgIXLw==}
+  /minimist@1.2.8:
+    resolution: {integrity: sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==}
     dev: false
 
   /proj4@2.7.5:
