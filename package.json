@@ -9,7 +9,7 @@
   "author": "Bert Spaan",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.25.0",
+    "axios": "^1.6.0",
     "csv-parse": "^5.0.4",
     "csv-parser": "^3.0.0",
     "highland": "^2.13.5",
